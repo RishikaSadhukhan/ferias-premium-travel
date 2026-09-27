@@ -1,0 +1,70 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 52px;
+  padding: 0 24px;
+  font-family: var(--font-sans);
+  font-size: var(--fs-small);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.005em;
+  white-space: nowrap;
+  /* No opacity transition: GSAP reveals animate button opacity, and a CSS transition
+     on the same property makes GSAP read a mid-transition value as the "end" state
+     (buttons were left invisible after the motion context rebuilt). */
+  transition:
+    background-color var(--dur-fast) ease,
+    color var(--dur-fast) ease;
+}
+
+.button svg {
+  transition: transform var(--dur) var(--ease-out);
+}
+
+.button:hover svg {
+  transform: translateX(4px);
+}
+
+.button:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}
+
+.light {
+  background: var(--bone);
+  color: var(--ink);
+}
+
+.light:hover {
+  background: #fff;
+}
+
+.dark {
+  background: var(--ink);
+  color: var(--bone);
+}
+
+.dark:hover {
+  background: #2a2824;
+}
+
+/* Text links styled as quiet buttons: underline grows on hover. */
+.link {
+  min-height: 44px;
+  padding: 0;
+  background-image: linear-gradient(currentcolor, currentcolor);
+  background-size: 100% 1px;
+  background-position: 0 calc(50% + 0.8em);
+  background-repeat: no-repeat;
+}
+
+.link:hover {
+  background-size: 100% 2px;
+}
+
+.block {
+  width: 100%;
+  justify-content: space-between;
+}

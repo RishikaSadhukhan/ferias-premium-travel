@@ -1,0 +1,32 @@
+.progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  gap: 4px;
+  height: 2px;
+  opacity: 0;
+  transition: opacity var(--dur) ease;
+}
+
+.visible {
+  opacity: 1;
+}
+
+.segment {
+  position: relative;
+  flex: 1;
+  background: var(--line);
+  overflow: hidden;
+}
+
+/* Each reel's ScrollTrigger writes --reel-<slug> on <html>; the nav just reads it. */
+.segment::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  transform: scaleX(var(--p, 0));
+  transform-origin: left;
+}

@@ -1,0 +1,59 @@
+/* FÉRIAS — Cinematic Exploration design tokens.
+   The interface stays quiet; the footage supplies the colour. */
+
+:root {
+  /* Palette */
+  --sand: #ece6da;
+  --bone: #f7f4ee;
+  --night: #0f0f0e;
+  --ink: #151412;
+  --mute: #5a554c;
+
+  --line: rgb(21 20 18 / 0.14);
+  --line-strong: rgb(21 20 18 / 0.3);
+  --on-dark: #f7f4ee;
+  --on-dark-mute: rgb(247 244 238 / 0.8);
+  --on-dark-line: rgb(247 244 238 / 0.3);
+  --scrim: rgb(10 10 9 / 0.72);
+
+  /* Type */
+  --font-display: 'Instrument Serif', georgia, 'Times New Roman', serif;
+  --font-sans: 'Geist Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, 'SFMono-Regular', menlo, monospace;
+
+  --fs-hero: clamp(3.9rem, 11.4vw, 11rem);
+  --fs-reel: clamp(5.25rem, 19vw, 18.75rem);
+  --fs-h2: clamp(2.9rem, 7.4vw, 7.75rem);
+  --fs-h3: clamp(1.75rem, 3vw, 2.9rem);
+  --fs-lead: clamp(1.15rem, 1.6vw, 1.4rem);
+  --fs-body: 1.0625rem;
+  --fs-small: 0.9375rem;
+  --fs-mono: 0.6875rem;
+
+  /* Space & layout */
+  --gutter: clamp(20px, 3.4vw, 48px);
+  --section-y: clamp(72px, 10vw, 140px);
+  --nav-h: 64px;
+  --max: 1680px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 180ms;
+  --dur: 450ms;
+  --dur-slow: 900ms;
+
+  /* Layers */
+  --z-media: 0;
+  --z-content: 2;
+  --z-nav: 50;
+  --z-dialog: 100;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur: 120ms;
+    --dur-slow: 150ms;
+  }
+}

@@ -1,0 +1,68 @@
+.footer {
+  padding: clamp(56px, 7vw, 88px) var(--gutter) 28px;
+  background: var(--bone);
+  color: var(--ink);
+  text-align: center;
+}
+
+.logo {
+  width: clamp(140px, 14vw, 190px);
+  height: auto;
+  margin: 0 auto;
+}
+
+.tagline {
+  margin-top: 14px;
+  color: var(--mute);
+}
+
+.credits {
+  display: grid;
+  gap: 36px;
+  margin: clamp(40px, 5vw, 60px) auto 0;
+  max-width: 1080px;
+}
+
+.role {
+  margin-bottom: 12px;
+  color: var(--mute);
+}
+
+.name {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1.2;
+}
+
+.name:hover,
+.name:focus-visible {
+  font-style: italic;
+}
+
+.bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px 24px;
+  margin-top: clamp(48px, 6vw, 72px);
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  color: var(--mute);
+}
+
+.top {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+}
+
+@media (min-width: 768px) {
+  .credits {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

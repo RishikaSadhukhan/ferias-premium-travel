@@ -1,0 +1,459 @@
+/* One reel = one scene. Mobile/tablet: a full-height card with a bottom-sheet
+   slate. Desktop (≥1024px): four distinct compositions keyed by layout. */
+
+.reel {
+  position: relative;
+  background: var(--night);
+  color: var(--on-dark);
+  /* Reels sit full-bleed under the nav: jumps land exactly at the reel's top (and its pin). */
+  scroll-margin-top: calc(-1 * var(--nav-h));
+}
+
+/* Japan, Kerala, Kashmir: transparent, so the page's Sand shows around the contained
+   film (the film box itself keeps its Night backing while the video loads). */
+.titleLeft,
+.centeredBar,
+.titleRight {
+  background: transparent;
+}
+
+/* Japan / Kashmir copy colours are variables so the unfold can cross-fade them from
+   ink-on-Sand to ivory-on-film (defaults are ivory: phones, tablet, reduced motion). */
+.titleLeft .copy,
+.titleRight .copy {
+  color: var(--rl-fg, var(--on-dark));
+}
+
+.titleLeft .logline,
+.titleRight .logline {
+  color: var(--rl-mute, var(--on-dark-mute));
+}
+
+/* Small text over bright footage (snow, sky) keeps a soft shadow instead of a darker
+   scrim. On Japan / Kashmir it fades in with the unfold (--rl-shadow), so the
+   contained ink-on-Sand state stays clean. Morocco is excluded. */
+.reel:not(.framedExpand) .logline,
+.reel:not(.framedExpand) .meta {
+  text-shadow: 0 1px 14px rgb(10 10 9 / var(--rl-shadow, 0.55));
+}
+
+.reel:not(.framedExpand) .meta {
+  --rl-shadow: 0.55;
+}
+
+/* Their kicker sits over the film even in the contained state, so it stays ivory. */
+.titleLeft .kicker,
+.titleRight .kicker {
+  color: var(--on-dark);
+}
+
+.stage {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 20px;
+  min-height: 100svh;
+  padding: calc(var(--nav-h) + 64px) 12px 12px;
+  overflow: hidden;
+}
+
+.frame {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: var(--night);
+}
+
+.video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgb(10 10 9 / 0.75) 12%, rgb(10 10 9 / 0.35) 40%, rgb(10 10 9 / 0) 68%);
+}
+
+.frameGuide {
+  display: none;
+}
+
+.shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgb(10 10 9 / 0.72) 0%, rgb(10 10 9 / 0.18) 55%, rgb(10 10 9 / 0) 78%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.dim {
+  position: absolute;
+  inset: 0;
+  background: var(--night);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.meta {
+  position: absolute;
+  top: calc(var(--nav-h) + 20px);
+  left: var(--gutter);
+  right: var(--gutter);
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.metaSub {
+  color: var(--on-dark-mute);
+}
+
+.rail {
+  display: none;
+}
+
+.copy {
+  padding: 0 8px;
+}
+
+.kicker {
+  margin-left: 0.2em;
+}
+
+.title {
+  font-size: min(var(--fs-reel), 30svh);
+  line-height: 0.82;
+  letter-spacing: -0.03em;
+}
+
+/* The 0.82 line-height is tight enough that descenders (J, p) hang ~0.15em below
+   the line box. Titles that have them get that room back, plus breathing space, in
+   em so it scales with the title. Morocco's composition is separate and excluded. */
+.reel:not(.framedExpand) .heading[data-descends] .title {
+  padding-bottom: 0.25em;
+}
+
+.package {
+  margin-top: 12px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-h3);
+  line-height: 1.1;
+}
+
+.logline {
+  margin-top: 10px;
+  max-width: 30rem;
+  font-size: var(--fs-small);
+  line-height: 1.6;
+  color: var(--on-dark-mute);
+}
+
+@media (min-width: 1024px) {
+  /* One reel = one viewport: the stage is exactly the screen (short laptops included). */
+  .stage {
+    --slate-w: 288px;
+
+    display: block;
+    height: 100svh;
+    min-height: 600px;
+    padding: 0;
+  }
+
+  .copy {
+    position: absolute;
+    bottom: 56px;
+    padding: 0;
+  }
+
+  .logline {
+    font-size: var(--fs-body);
+  }
+
+  .slate {
+    position: absolute;
+    bottom: 56px;
+  }
+
+  .rail {
+    position: absolute;
+    top: calc(var(--nav-h) + 64px);
+    right: var(--gutter);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .railItem {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    font-size: 0.625rem;
+    color: var(--on-dark-mute);
+  }
+
+  .railItem::after {
+    content: '';
+    width: 14px;
+    height: 1px;
+    background: currentcolor;
+  }
+
+  .railActive {
+    color: var(--on-dark);
+  }
+
+  .railActive::after {
+    width: 28px;
+    height: 2px;
+  }
+
+  /* Japan, Kerala, Kashmir share Morocco's motion language: the film starts in the
+     same contained rectangle (on Night) and unfolds to full bleed while pinned.
+     The guide is an invisible copy of that rectangle for the timeline to measure. */
+  .titleLeft .stage,
+  .centeredBar .stage,
+  .titleRight .stage {
+    --fx: calc(var(--gutter) * 2);
+    --ft: calc(var(--nav-h) + 16px);
+    --fb: min(64svh, calc(100svh - 300px));
+  }
+
+  .titleLeft .frameGuide,
+  .centeredBar .frameGuide,
+  .titleRight .frameGuide {
+    position: absolute;
+    inset: var(--ft) var(--fx) auto;
+    display: block;
+    height: calc(var(--fb) - var(--ft));
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .reel[data-unfold] .frame {
+    will-change: clip-path;
+  }
+
+  /* 01 — title left, slate right */
+  .titleLeft .scrim {
+    background:
+      linear-gradient(90deg, rgb(10 10 9 / 0.55) 0%, rgb(10 10 9 / 0.18) 42%, rgb(10 10 9 / 0) 64%),
+      linear-gradient(0deg, rgb(10 10 9 / 0.4) 0%, rgb(10 10 9 / 0) 32%),
+      linear-gradient(180deg, rgb(10 10 9 / 0.3) 0%, rgb(10 10 9 / 0) 20%);
+  }
+
+  .titleLeft .copy {
+    left: calc(var(--gutter) - 6px);
+    width: min(820px, calc(100% - var(--slate-w) - var(--gutter) * 3));
+  }
+
+  .titleLeft .slate {
+    right: var(--gutter);
+  }
+
+  /* 04 — title right, slate left */
+  .titleRight .scrim {
+    background:
+      linear-gradient(270deg, rgb(10 10 9 / 0.55) 0%, rgb(10 10 9 / 0.18) 42%, rgb(10 10 9 / 0) 64%),
+      linear-gradient(0deg, rgb(10 10 9 / 0.4) 0%, rgb(10 10 9 / 0) 32%),
+      linear-gradient(180deg, rgb(10 10 9 / 0.3) 0%, rgb(10 10 9 / 0) 20%);
+  }
+
+  .titleRight .copy {
+    right: calc(var(--gutter) - 6px);
+    width: min(860px, calc(100% - var(--slate-w) - var(--gutter) * 3));
+    text-align: right;
+  }
+
+  .titleRight .logline {
+    margin-left: auto;
+  }
+
+  .titleRight .slate {
+    left: var(--gutter);
+  }
+
+  .titleRight .rail {
+    top: calc(var(--nav-h) + 20px);
+  }
+
+  .titleRight .metaEnd {
+    visibility: hidden;
+  }
+
+  /* 03 — centred title, information bar */
+  .centeredBar .scrim {
+    background:
+      radial-gradient(ellipse 60% 42% at 50% 34%, rgb(10 10 9 / 0.32), rgb(10 10 9 / 0) 100%),
+      linear-gradient(0deg, rgb(10 10 9 / 0.35) 0%, rgb(10 10 9 / 0) 28%),
+      linear-gradient(180deg, rgb(10 10 9 / 0.3) 0%, rgb(10 10 9 / 0) 20%);
+  }
+
+  .centeredBar .copy {
+    top: calc(var(--nav-h) + 11svh);
+    bottom: auto;
+    left: 0;
+    right: 0;
+    text-align: center;
+  }
+
+  .centeredBar .logline {
+    margin-inline: auto;
+  }
+
+  .centeredBar .slate {
+    left: var(--gutter);
+    right: var(--gutter);
+    bottom: 32px;
+    width: auto;
+  }
+
+  /* 02 — Morocco: the approved "framed film → full bleed" composition.
+     Proportions follow the V2 board (1440 × 860): the film ~⅔ of the frame
+     height with wide Sand margins, the 230px title overlapping the film's
+     bottom edge by 20px, kicker beneath it, a compact story column at right.
+     --fb (the film's bottom edge) leaves room for the story on short screens. */
+  .framedExpand {
+    --mo-fg: var(--ink);
+    --mo-mute: var(--mute);
+    --mo-line: var(--line);
+
+    background: var(--sand);
+    color: var(--ink);
+  }
+
+  .framedExpand .stage {
+    --fx: calc(var(--gutter) * 2);
+    --ft: calc(var(--nav-h) + 16px);
+    --fb: min(64svh, calc(100svh - 300px));
+
+    display: block;
+    height: 100svh;
+    min-height: 640px;
+    padding: 0;
+  }
+
+  .framedExpand .frame,
+  .framedExpand .frameGuide {
+    position: absolute;
+    inset: var(--ft) var(--fx) auto;
+    height: calc(var(--fb) - var(--ft));
+  }
+
+  .framedExpand .frame {
+    z-index: 0;
+  }
+
+  .framedExpand .frameGuide {
+    display: block;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  /* FULL only (data-expandable set by the reel timeline): the film becomes a
+     full-stage box, clipped back to the framed rectangle until the clip opens. */
+  .framedExpand[data-expandable] .frame {
+    inset: 0;
+    height: auto;
+    will-change: clip-path;
+  }
+
+  .framedExpand .scrim {
+    background: linear-gradient(180deg, rgb(10 10 9 / 0.35) 0%, rgb(10 10 9 / 0) 30%);
+  }
+
+  .framedExpand .meta {
+    top: calc(var(--ft) + 22px);
+    left: calc(var(--fx) + 24px);
+    right: calc(var(--fx) + 24px);
+    z-index: 1;
+    color: var(--on-dark);
+  }
+
+  .framedExpand .copy {
+    display: contents;
+  }
+
+  .framedExpand .heading {
+    position: absolute;
+    z-index: 2;
+    left: calc(var(--fx) - 8px);
+    top: calc(var(--fb) - 20px);
+    display: flex;
+    flex-direction: column-reverse;
+    color: var(--mo-fg);
+  }
+
+  .framedExpand .title {
+    font-size: min(16vw, 26svh);
+  }
+
+  .framedExpand .kicker {
+    margin: min(48px, 4.5svh) 0 0 8px;
+    color: var(--mo-mute);
+  }
+
+  .framedExpand .story {
+    position: absolute;
+    z-index: 2;
+    top: calc(var(--fb) + 32px);
+    right: var(--fx);
+    width: min(444px, 36vw);
+    color: var(--mo-fg);
+  }
+
+  .framedExpand .package {
+    margin: 0;
+    font-size: clamp(2rem, 2.8vw, 2.5rem);
+  }
+
+  .framedExpand .logline {
+    margin-top: 8px;
+    max-width: none;
+    font-size: 1rem;
+    color: var(--mo-mute);
+  }
+
+  .framedExpand .slate {
+    --strip-fg: var(--mo-fg);
+    --strip-mute: var(--mo-mute);
+    --strip-line: var(--mo-line);
+
+    position: static;
+    width: auto;
+  }
+}
+
+/* Laptop-narrow widths: keep the title clear of the story column. */
+@media (min-width: 1024px) and (max-width: 1279.98px) {
+  .framedExpand .title {
+    font-size: min(13vw, 26svh);
+  }
+
+  .framedExpand .story {
+    width: min(420px, 40vw);
+  }
+
+  .framedExpand .logline {
+    font-size: var(--fs-small);
+  }
+}
+
+/* Short laptop screens: the rail would collide with the slate card. */
+@media (min-width: 1024px) and (max-height: 820px) {
+  .rail {
+    display: none;
+  }
+
+  .titleRight .metaEnd {
+    visibility: visible;
+  }
+}

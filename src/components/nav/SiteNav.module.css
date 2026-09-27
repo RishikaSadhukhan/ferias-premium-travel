@@ -1,0 +1,144 @@
+.nav {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: var(--z-nav);
+  height: 84px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 0 var(--gutter);
+  color: var(--on-dark);
+  transition:
+    height var(--dur) var(--ease-out),
+    background-color var(--dur) var(--ease-out),
+    color var(--dur) var(--ease-out);
+}
+
+.solid {
+  height: var(--nav-h);
+  background: var(--bone);
+  color: var(--ink);
+}
+
+.logo {
+  position: relative;
+  display: block;
+  width: clamp(92px, 8vw, 120px);
+  flex-shrink: 0;
+}
+
+.logo img {
+  width: 100%;
+  height: auto;
+  transition: opacity var(--dur) ease;
+}
+
+.logo .logoInk {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+
+.solid .logoIvory {
+  opacity: 0;
+}
+
+.solid .logoInk {
+  opacity: 1;
+}
+
+.links {
+  display: none;
+}
+
+.link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 10px;
+  height: 1px;
+  background: currentcolor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--dur) var(--ease-out);
+}
+
+.link:hover::after,
+.link[aria-current='true']::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.end {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.readout {
+  display: none;
+  color: var(--mute);
+}
+
+.cta {
+  display: none;
+}
+
+.solid .cta {
+  background: var(--ink);
+  color: var(--bone);
+  min-height: 40px;
+}
+
+.menuButton {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid var(--on-dark-line);
+  display: grid;
+  place-items: center;
+  transition: border-color var(--dur) ease;
+}
+
+.solid .menuButton {
+  border-color: var(--line-strong);
+}
+
+@media (min-width: 1024px) {
+  .links {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 40px;
+  }
+
+  .cta {
+    display: inline-flex;
+  }
+
+  .menuButton {
+    display: none;
+  }
+
+  .solid .readout {
+    display: block;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1279.98px) {
+  .solid .readout {
+    display: none;
+  }
+}
