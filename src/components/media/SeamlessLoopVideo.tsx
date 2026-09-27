@@ -27,6 +27,10 @@ export function SeamlessLoopVideo({ src, poster, className, fade = 1 }: Seamless
   const second = useRef<HTMLVideoElement>(null)
   const { posterOnly } = useMotion()
   const [near, setNear] = useState(false)
+  // The second copy attaches only once the first has buffered, so its request reuses the
+  // finished cache entry: two simultaneous range requests for one file can make Chrome's
+  // cache refuse one of them (ERR_CACHE_OPERATION_NOT_SUPPORTED).
+  const [secondReady, setSecondReady] = useState(false)
   const enabled = near && !posterOnly
 
   // 1. Attach the media when the section approaches the viewport.
@@ -56,7 +60,8 @@ export function SeamlessLoopVideo({ src, poster, className, fade = 1 }: Seamless
     let active = 0
     let visible = false
     let timer = 0
-    const resets: number[] = []
+    // Pending "pause + rewind the faded-out copy" timers; each removes itself when it runs.
+    const resets = new Set<number>()
 
     // The incoming copy fades in on top while the outgoing one stays fully opaque
     // underneath, so coverage never dips (two 50% layers would let the backdrop through).
@@ -78,22 +83,32 @@ export function SeamlessLoopVideo({ src, poster, className, fade = 1 }: Seamless
       const next = videos[1 - active]
       // Never dissolve into a copy that has no decoded frame yet (it would flash the backdrop).
       if (next.readyState < 2) {
-        next.addEventListener('canplay', crossfade, { once: true })
+        if (previous.ended) {
+          // Still not ready at the very end (slow network, or its request failed): loop this
+          // copy with a plain restart rather than freezing on the last frame; retry the other.
+          next.removeEventListener('canplay', crossfade)
+          if (next.error) next.load()
+          previous.currentTime = 0
+          previous.play().catch(() => {})
+          schedule()
+        } else {
+          next.addEventListener('canplay', crossfade, { once: true })
+        }
         return
       }
       active = 1 - active
       next.currentTime = 0
       next.play().catch(() => {})
       bringToFront(active)
-      resets.push(
-        window.setTimeout(() => {
-          // Hidden under the opaque copy, so drop it instantly (ready for the next dissolve).
-          previous.style.transition = 'none'
-          previous.style.opacity = '0'
-          previous.pause()
-          previous.currentTime = 0
-        }, fade * 1000 + 60),
-      )
+      const reset = window.setTimeout(() => {
+        resets.delete(reset)
+        // Hidden under the opaque copy, so drop it instantly (ready for the next dissolve).
+        previous.style.transition = 'none'
+        previous.style.opacity = '0'
+        previous.pause()
+        previous.currentTime = 0
+      }, fade * 1000 + 60)
+      resets.add(reset)
       schedule()
     }
     // Safety net: if buffering delays the timer, never let a copy sit on its last frame.
@@ -101,6 +116,9 @@ export function SeamlessLoopVideo({ src, poster, className, fade = 1 }: Seamless
       if (event.currentTarget === videos[active]) crossfade()
     }
     const onMeta = () => schedule()
+    const onBuffered = () => setSecondReady(true)
+    if (a.readyState >= 4) onBuffered()
+    else a.addEventListener('canplaythrough', onBuffered, { once: true })
 
     videos.forEach((v) => {
       v.addEventListener('ended', onEnded)
@@ -127,9 +145,11 @@ export function SeamlessLoopVideo({ src, poster, className, fade = 1 }: Seamless
       observer.disconnect()
       window.clearTimeout(timer)
       resets.forEach((id) => window.clearTimeout(id))
+      a.removeEventListener('canplaythrough', onBuffered)
       videos.forEach((v) => {
         v.removeEventListener('ended', onEnded)
         v.removeEventListener('loadedmetadata', onMeta)
+        v.removeEventListener('canplay', crossfade)
         v.pause()
       })
     }
@@ -153,10 +173,10 @@ export function SeamlessLoopVideo({ src, poster, className, fade = 1 }: Seamless
         ref={second}
         className={s.video}
         style={{ opacity: 0 }}
-        src={enabled ? src : undefined}
+        src={enabled && secondReady ? src : undefined}
         muted
         playsInline
-        preload={enabled ? 'auto' : 'none'}
+        preload={enabled && secondReady ? 'auto' : 'none'}
         tabIndex={-1}
         disablePictureInPicture
         data-loop-copy="b"
