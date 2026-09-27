@@ -51,6 +51,14 @@
   letter-spacing: -0.03em;
 }
 
+/* The reveal mask shrink-wraps the line and clips its overflow, which cut off the
+   italic "?" (italic glyphs draw past their advance width). Room on both sides,
+   cancelled by negative margins, so the text itself doesn't move. */
+.title :global(.mask) {
+  padding-inline: 0.12em;
+  margin-inline: -0.12em;
+}
+
 .body {
   margin: 28px auto 0;
   max-width: 34rem;

@@ -74,6 +74,7 @@
 .frame figcaption {
   margin-top: 8px;
   color: var(--mute);
+  text-align: center;
 }
 
 .columns {
